@@ -1,0 +1,6 @@
+[submodule "libs/libtesla"]
+	path = libs/libtesla
+	url = https://github.com/kawaii-flesh/libtesla
+[submodule "libs/json"]
+	path = libs/json
+	url = https://github.com/nlohmann/json.git

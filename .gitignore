@@ -1,0 +1,14 @@
+
+build/
+
+*.ovl
+
+*.elf
+
+*.nacp
+
+*.nro
+
+*.map
+
+.vscode
