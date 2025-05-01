@@ -56,7 +56,7 @@ void TraNXElement::draw(tsl::gfx::Renderer *renderer) {
     bgColorOpaque.a = 0xf;
 
     drawRectFrame(renderer, frame, bgColorOpaque, 4);
-    renderer->drawString(text.text.c_str(), false, text.x, text.y + text.height,
+    renderer->drawString(text.text.c_str(), false, text.x + 8, text.y + text.height,
                          text.height, fontColor);
   }
 }

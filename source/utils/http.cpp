@@ -50,6 +50,9 @@ std::string HttpRequester::sendScreenshotAndFrames(
   u64 PID, programID;
   pmdmntGetApplicationProcessId(&PID);
   pmdmntGetProgramId(&programID, PID);
+  if(programID < 0x0100000000000000) {
+    programID = 0;
+  }
 
   curl_mime *mime = curl_mime_init(curl_.get());
   curl_mimepart *part;
