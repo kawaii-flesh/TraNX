@@ -16,8 +16,10 @@ namespace utils {
 
 [[nodiscard]] tsl::Color hexToColor4444(std::string_view hexStr) noexcept;
 
-[[nodiscard]] u64 comboStringToKeysOrDefault(const std::string &value, u64 defaultKeyCombo) noexcept;
+[[nodiscard]] std::pair<u64, bool>
+comboStringToKeysOrDefault(const std::string &value,
+                           u64 defaultKeyCombo) noexcept;
 
-void logTNX(const char* format, ...);
+void logTNX(const char *format, ...);
 
 } // namespace utils

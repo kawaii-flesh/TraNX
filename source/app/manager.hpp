@@ -12,19 +12,19 @@
 
 namespace app {
 
-enum class State { RUNNING, COMBO_PROCESSING, UPLOAD };
+enum class State { RUNNING, COMBO_PROCESSING, UPLOAD, ALL };
 
 class Manager {
 private:
   core::Text text;
   Config &config = Config::getInstance();
 
-  int backComboKeys = 0;
-  int changeModeComboKeys = 0;
-  int uploadComboKeys = 0;
-  int translationFrameComboKeys = 0;
-  int outputFrameComboKeys = 0;
-  int cleanScreenComboKeys = 0;
+  std::pair<u64, bool> backComboKeys{0, false};
+  std::pair<u64, bool> changeModeComboKeys{0, false};
+  std::pair<u64, bool> uploadComboKeys{0, false};
+  std::pair<u64, bool> translationFrameComboKeys{0, false};
+  std::pair<u64, bool> outputFrameComboKeys{0, false};
+  std::pair<u64, bool> cleanScreenComboKeys{0, false};
 
   Manager() = default;
 
@@ -33,7 +33,7 @@ private:
   Frame translationFrame;
   bool useOutputFrame = false;
   Frame outputFrame;
-  State state = State::RUNNING;
+  State currentState = State::RUNNING;
   utils::HttpRequester httpRequester;
   bool initialized = false;
 
@@ -48,10 +48,10 @@ public:
   [[nodiscard]] const core::Text &getText() const noexcept;
   void updateText(const std::string &jsonResponse);
 
-  bool processingInput(u64 keysDown, u64 keysHeld,
-                       const HidTouchState &touchPos,
-                       HidAnalogStickState joyStickPosLeft,
-                       HidAnalogStickState joyStickPosRight);
+  [[nodiscard]] bool processingInput(u64 keysDown, u64 keysHeld,
+                                     const HidTouchState &touchPos,
+                                     HidAnalogStickState joyStickPosLeft,
+                                     HidAnalogStickState joyStickPosRight);
   [[nodiscard]] State getState() noexcept;
   [[nodiscard]] const Frame &getTranslationFrame() noexcept;
   [[nodiscard]] const Frame &getOutputFrame() noexcept;
@@ -62,10 +62,15 @@ public:
 private:
   void handleModeChange();
   void handleUpload();
-  bool handleFrameTracking(u64 keysHeld, const HidTouchScreenState &touchState);
-  bool startFrameTracking(u64 keysHeld, const HidTouchScreenState &touchState,
-                          Frame *&currentFrame);
-  bool stopFrameTracking(Frame *currentFrame);
+  [[nodiscard]] bool handleFrameTracking(u64 keysHeld,
+                                         const HidTouchScreenState &touchState);
+  [[nodiscard]] bool startFrameTracking(u64 keysHeld,
+                                        const HidTouchScreenState &touchState,
+                                        Frame *&currentFrame);
+  [[nodiscard]] bool stopFrameTracking(Frame *currentFrame);
+  [[nodiscard]] bool checkComboAndState(const u64 keysDown,
+                                        std::pair<u64, bool> combo,
+                                        const State state) noexcept;
 };
 
 } // namespace app

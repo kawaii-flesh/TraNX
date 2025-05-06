@@ -72,9 +72,19 @@ tsl::Color hexToColor4444(std::string_view hexStr) noexcept {
           0xFF};
 }
 
-u64 comboStringToKeysOrDefault(const std::string &value, u64 defaultKeyCombo) noexcept {
-  u64 keyCombo = tsl::hlp::comboStringToKeys(value);
-  return keyCombo != 0x00 ? keyCombo : defaultKeyCombo;
+[[nodiscard]] std::pair<u64, bool>
+comboStringToKeysOrDefault(const std::string &value,
+                           u64 defaultKeyCombo) noexcept {
+  bool inAllModes = false;
+  std::string_view view(value);
+
+  if (!view.empty() && view[0] == '!') {
+    inAllModes = true;
+    view.remove_prefix(1);
+  }
+
+  u64 keyCombo = tsl::hlp::comboStringToKeys(std::string(view));
+  return {keyCombo != 0x00 ? keyCombo : defaultKeyCombo, inAllModes};
 }
 
 u64 getPID() noexcept {

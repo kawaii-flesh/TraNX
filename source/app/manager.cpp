@@ -59,26 +59,23 @@ bool Manager::processingInput(u64 keysDown, u64 keysHeld,
     return true;
   }
 
-  if (utils::checkCombo(keysDown, changeModeComboKeys)) {
+  if (checkComboAndState(keysDown, changeModeComboKeys, State::ALL)) {
     handleModeChange();
     return true;
   }
 
-  if (state != State::COMBO_PROCESSING) {
-    return false;
-  }
-
-  if (utils::checkCombo(keysDown, backComboKeys)) {
+  if (checkComboAndState(keysDown, backComboKeys, State::COMBO_PROCESSING)) {
     tsl::goBack();
     return true;
   }
 
-  if (utils::checkCombo(keysDown, uploadComboKeys)) {
+  if (checkComboAndState(keysDown, uploadComboKeys, State::COMBO_PROCESSING)) {
     handleUpload();
     return true;
   }
 
-  if (utils::checkCombo(keysDown, cleanScreenComboKeys)) {
+  if (checkComboAndState(keysDown, cleanScreenComboKeys,
+                         State::COMBO_PROCESSING)) {
     text.text.clear();
     return true;
   }
@@ -87,8 +84,8 @@ bool Manager::processingInput(u64 keysDown, u64 keysHeld,
 }
 
 void Manager::handleModeChange() {
-  bool isComboProcessing = state == State::COMBO_PROCESSING;
-  state = isComboProcessing ? State::RUNNING : State::COMBO_PROCESSING;
+  bool isComboProcessing = currentState == State::COMBO_PROCESSING;
+  currentState = isComboProcessing ? State::RUNNING : State::COMBO_PROCESSING;
   if (isComboProcessing) {
     text.text.clear();
   }
@@ -98,22 +95,22 @@ void Manager::handleModeChange() {
 void Manager::handleUpload() {
   tsl::Overlay::get()->clearScreen();
   auto screenshot = utils::captureScreenshotToBuffer();
-  state = State::UPLOAD;
   try {
     updateText(httpRequester.sendScreenshotAndFrames(
         config.getUploadURL(), screenshot, translationFrame, outputFrame,
         useOutputFrame));
   } catch (...) {
   }
-  state = State::COMBO_PROCESSING;
 }
 
 bool Manager::handleFrameTracking(u64 keysHeld,
                                   const HidTouchScreenState &touchState) {
   static Frame *currentFrame = nullptr;
 
-  if (!tracking && (utils::checkCombo(keysHeld, translationFrameComboKeys) ||
-                    utils::checkCombo(keysHeld, outputFrameComboKeys))) {
+  if (!tracking && (checkComboAndState(keysHeld, translationFrameComboKeys,
+                                       State::COMBO_PROCESSING) ||
+                    checkComboAndState(keysHeld, outputFrameComboKeys,
+                                       State::COMBO_PROCESSING))) {
     return startFrameTracking(keysHeld, touchState, currentFrame);
   }
 
@@ -123,8 +120,11 @@ bool Manager::handleFrameTracking(u64 keysHeld,
     return true;
   }
 
-  if (tracking && !utils::checkCombo(keysHeld, translationFrameComboKeys) &&
-      !(utils::checkCombo(keysHeld, outputFrameComboKeys) &&
+  if (tracking &&
+      !checkComboAndState(keysHeld, translationFrameComboKeys,
+                          State::COMBO_PROCESSING) &&
+      !(checkComboAndState(keysHeld, outputFrameComboKeys,
+                           State::COMBO_PROCESSING) &&
         trackingOutputFrame)) {
     return stopFrameTracking(currentFrame);
   }
@@ -138,9 +138,11 @@ bool Manager::startFrameTracking(u64 keysHeld,
   if (touchState.count == 0)
     return false;
 
-  if (utils::checkCombo(keysHeld, translationFrameComboKeys)) {
+  if (checkComboAndState(keysHeld, translationFrameComboKeys,
+                         State::COMBO_PROCESSING)) {
     currentFrame = &translationFrame;
-  } else if (utils::checkCombo(keysHeld, outputFrameComboKeys)) {
+  } else if (checkComboAndState(keysHeld, outputFrameComboKeys,
+                                State::COMBO_PROCESSING)) {
     currentFrame = &outputFrame;
     useOutputFrame = true;
     trackingOutputFrame = true;
@@ -169,7 +171,7 @@ bool Manager::stopFrameTracking(Frame *currentFrame) {
   return true;
 }
 
-State Manager::getState() noexcept { return state; }
+State Manager::getState() noexcept { return currentState; }
 const Frame &Manager::getTranslationFrame() noexcept {
   return translationFrame;
 }
@@ -177,5 +179,11 @@ const Frame &Manager::getOutputFrame() noexcept { return outputFrame; };
 bool Manager::getTrackingOutputFrame() noexcept { return trackingOutputFrame; }
 bool Manager::getTracking() noexcept { return tracking; }
 bool Manager::getUseOutputFrame() noexcept { return useOutputFrame; }
+
+bool Manager::checkComboAndState(const u64 keysDown, std::pair<u64, bool> combo,
+                                 const State state) noexcept {
+  return utils::checkCombo(keysDown, combo.first) &&
+         (state == State::ALL || combo.second || state == currentState);
+}
 
 } // namespace app
