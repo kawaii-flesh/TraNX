@@ -1,6 +1,10 @@
 # TraNX.ovl
 TraNX - экранный переводчик для Nintendo Switch
 
+中文说明: [README-zh.md](README-zh.md)
+
+English Introduction: [README-en.md](README-en.md)
+
 ## Установка и запуск
 1. Запустить [TraNX-Server](https://github.com/kawaii-flesh/TraNX-Server)
 1. Поставить [nx-ovlloader с расширенной памятью](https://github.com/kawaii-flesh/nx-ovlloader/releases)
