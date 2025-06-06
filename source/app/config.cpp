@@ -4,11 +4,27 @@
 
 namespace app {
 
+namespace defaults {
+constexpr const char *UPLOAD_URL = "http://127.0.0.1:1785/upload";
+constexpr const char *CHANGE_MODE_COMBO = "LS";
+constexpr const char *BACK_COMBO = "DLEFT";
+constexpr const char *UPLOAD_COMBO = "RS";
+constexpr const char *TRANSLATION_FRAME_COMBO = "DRIGHT";
+constexpr const char *OUTPUT_FRAME_COMBO = "DUP";
+constexpr const char *CLEAN_SCREEN_COMBO = "DDOWN";
+constexpr const char *BACKGROUND_COLOR = "050505";
+constexpr const char *FONT_COLOR = "FFFFFF";
+} // namespace defaults
+
 Config::Config() noexcept
-    : uploadURL("http://127.0.0.1:1785/upload"), changeModeCombo("LS"),
-      backCombo("DLEFT"), uploadCombo("RS"), translationFrameCombo("DRIGHT"),
-      outputFrameCombo("DUP"), cleanScreenCombo("DDOWN"),
-      backgroundColor("050505"), fontColor("FFFFFF") {
+    : uploadURL(defaults::UPLOAD_URL),
+      changeModeCombo(defaults::CHANGE_MODE_COMBO),
+      backCombo(defaults::BACK_COMBO), uploadCombo(defaults::UPLOAD_COMBO),
+      translationFrameCombo(defaults::TRANSLATION_FRAME_COMBO),
+      outputFrameCombo(defaults::OUTPUT_FRAME_COMBO),
+      cleanScreenCombo(defaults::CLEAN_SCREEN_COMBO),
+      backgroundColor(defaults::BACKGROUND_COLOR),
+      fontColor(defaults::FONT_COLOR) {
   try {
     std::filesystem::create_directories(configDirPath);
   } catch (...) {
@@ -78,24 +94,29 @@ void Config::load() noexcept {
 
     if (iniData.contains("General")) {
       const auto &section = iniData["General"];
-      if (section.contains("uploadURL"))
-        setUploadURL(section.at("uploadURL"));
-      if (section.contains("changeModeCombo"))
-        setChangeModeCombo(section.at("changeModeCombo"));
-      if (section.contains("backCombo"))
-        setBackCombo(section.at("backCombo"));
-      if (section.contains("uploadCombo"))
-        setUploadCombo(section.at("uploadCombo"));
-      if (section.contains("translationFrameCombo"))
-        setTranslationFrameCombo(section.at("translationFrameCombo"));
-      if (section.contains("outputFrameCombo"))
-        setOutputFrameCombo(section.at("outputFrameCombo"));
-      if (section.contains("cleanScreenCombo"))
-        setCleanScreenCombo(section.at("cleanScreenCombo"));
-      if (section.contains("backgroundColor"))
-        setBackgroundColor(section.at("backgroundColor"));
-      if (section.contains("fontColor"))
-        setFontColor(section.at("fontColor"));
+      setUploadURL(section.contains("uploadURL") ? section.at("uploadURL")
+                                                 : defaults::UPLOAD_URL);
+      setChangeModeCombo(section.contains("changeModeCombo")
+                             ? section.at("changeModeCombo")
+                             : defaults::CHANGE_MODE_COMBO);
+      setBackCombo(section.contains("backCombo") ? section.at("backCombo")
+                                                 : defaults::BACK_COMBO);
+      setUploadCombo(section.contains("uploadCombo") ? section.at("uploadCombo")
+                                                     : defaults::UPLOAD_COMBO);
+      setTranslationFrameCombo(section.contains("translationFrameCombo")
+                                   ? section.at("translationFrameCombo")
+                                   : defaults::TRANSLATION_FRAME_COMBO);
+      setOutputFrameCombo(section.contains("outputFrameCombo")
+                              ? section.at("outputFrameCombo")
+                              : defaults::OUTPUT_FRAME_COMBO);
+      setCleanScreenCombo(section.contains("cleanScreenCombo")
+                              ? section.at("cleanScreenCombo")
+                              : defaults::CLEAN_SCREEN_COMBO);
+      setBackgroundColor(section.contains("backgroundColor")
+                             ? section.at("backgroundColor")
+                             : defaults::BACKGROUND_COLOR);
+      setFontColor(section.contains("fontColor") ? section.at("fontColor")
+                                                 : defaults::FONT_COLOR);
     }
   } catch (const std::exception &e) {
     utils::logTNX("Error loading config: %s\n", e.what());

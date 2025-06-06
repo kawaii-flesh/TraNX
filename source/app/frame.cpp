@@ -23,4 +23,11 @@ Frame Frame::fromJson(const nlohmann::json &json) {
 
 std::string Frame::toJsonString() const { return toJson().dump(); }
 
+void Frame::updateFromJson(const nlohmann::json &json) {
+  startX = json.at("startX").get<uint32_t>();
+  startY = json.at("startY").get<uint32_t>();
+  endX = json.at("endX").get<uint32_t>();
+  endY = json.at("endY").get<uint32_t>();
+}
+
 } // namespace app

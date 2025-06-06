@@ -38,8 +38,12 @@ const core::Text &Manager::getText() const noexcept { return text; }
 
 void Manager::updateText(const std::string &jsonResponse) {
   try {
-    auto json = nlohmann::json::parse(jsonResponse)["text"];
-    text =
+    auto json = nlohmann::json::parse(jsonResponse);
+
+    this->useOutputFrame = json.at("use_output_frame").get<bool>();
+    this->translationFrame.updateFromJson(json["translation_frame"]);
+    this->outputFrame.updateFromJson(json["output_frame"]);
+    this->text =
         core::Text(json.at("text").get<std::string>(), json.at("x").get<int>(),
                    json.at("y").get<int>(), json.at("width").get<int>(),
                    json.at("height").get<int>());

@@ -21,5 +21,7 @@ public:
   [[nodiscard]] nlohmann::json toJson() const;
   [[nodiscard]] static Frame fromJson(const nlohmann::json &json);
   [[nodiscard]] std::string toJsonString() const;
+
+  void updateFromJson(const nlohmann::json& json);
 };
 } // namespace app

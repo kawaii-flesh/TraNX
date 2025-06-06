@@ -38,9 +38,9 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
 APP_TITLE	:=	TraNX
-APP_VERSION :=	1.1.0
+APP_VERSION :=	2.0.0
 
-TARGET		:=	$(notdir $(CURDIR))
+TARGET		:=	TraNX
 BUILD		:=	build
 SOURCES		:=	source source/utils source/app source/core source/front
 DATA		:=	data
