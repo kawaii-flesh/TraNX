@@ -24,9 +24,9 @@ English Introduction: [README-en.md](README-en.md)
 `黄色` - 交互模式：
 
 从 v1.1.0 版本开始，可以在两种模式（绿色和黄色）下使用组合键。
-为此，需要在配置文件 `sd:/config/Trunk/config.ini` 中的组合键前加上感叹号：
+为此，需要在配置文件 `sd:/config/TraNX/config.ini` 中的组合键前加上感叹号：
 ```ini
-upload Combo=!RS ; 现在可以在两种模式下执行翻译请求，无需切换
+uploadCombo=!RS ; 现在可以在两种模式下执行翻译请求，无需切换
 ```
 
 选择翻译区域：
