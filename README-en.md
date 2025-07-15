@@ -24,9 +24,9 @@ After launching `TraNX`, a rectangle will be displayed in the upper left corner,
 `Yellow` - interactive mode:
 
 Starting from version v1.1.0, it is possible to use combinations in both modes (green and yellow).
-To do this, in the config `sd:/config/Trunk/config.ini`, an exclamation mark must be placed before the combination:
+To do this, in the config `sd:/config/TraNX/config.ini`, an exclamation mark must be placed before the combination:
 ```ini
-upload Combo=!RS ; now a translation request can be made in both modes without switching
+uploadCombo=!RS ; now a translation request can be made in both modes without switching
 ```
 
 Selecting the area for translation:
