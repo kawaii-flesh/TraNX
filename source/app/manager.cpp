@@ -1,4 +1,5 @@
 #include "manager.hpp"
+#include "../utils/discover.hpp"
 
 namespace app {
 
@@ -15,6 +16,19 @@ void Manager::init() {
       }
     } else {
       config.load();
+      if (config.getUploadURL() == "*") {
+        try {
+          std::string discovered = utils::discoverServer(1786, 3000);
+          config.setUploadURL("http://" + discovered + "/upload");
+          utils::logTNX(
+              ("Discovered upload URL: " + config.getUploadURL() + "\n")
+                  .c_str());
+        } catch (const std::exception &e) {
+          utils::logTNX(
+              ("Discovery failed: " + std::string(e.what()) + "\n").c_str());
+          tsl::goBack();
+        }
+      }
     }
 
     backComboKeys = utils::comboStringToKeysOrDefault(config.getBackCombo(),

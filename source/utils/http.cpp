@@ -22,12 +22,13 @@ struct CurlHeaders {
 
 namespace utils {
 
-HttpRequester::HttpRequester() : curl_(curl_easy_init(), &curl_easy_cleanup) {
-  if (!curl_) {
+HttpRequester::HttpRequester() : curl(curl_easy_init()) {
+  if (!curl) {
     throw HttpException("Failed to initialize CURL");
   }
-  curl_global_init(CURL_GLOBAL_DEFAULT);
 }
+
+HttpRequester::~HttpRequester() { curl_easy_cleanup(curl); }
 
 size_t HttpRequester::writeCallback(void *contents, size_t size, size_t nmemb,
                                     std::string *data) {
@@ -41,7 +42,7 @@ std::string HttpRequester::sendScreenshotAndFrames(
     const app::Frame &translationFrame, const app::Frame &outputFrame,
     bool useOutputFrame) const {
 
-  if (!curl_) {
+  if (!curl) {
     throw HttpException("CURL not initialized");
   }
 
@@ -50,11 +51,11 @@ std::string HttpRequester::sendScreenshotAndFrames(
   u64 PID, programID;
   pmdmntGetApplicationProcessId(&PID);
   pmdmntGetProgramId(&programID, PID);
-  if(programID < 0x0100000000000000) {
+  if (programID < 0x0100000000000000) {
     programID = 0;
   }
 
-  curl_mime *mime = curl_mime_init(curl_.get());
+  curl_mime *mime = curl_mime_init(curl);
   curl_mimepart *part;
 
   part = curl_mime_addpart(mime);
@@ -82,19 +83,19 @@ std::string HttpRequester::sendScreenshotAndFrames(
   curl_mime_name(part, "pid");
   curl_mime_data(part, std::to_string(programID).c_str(), CURL_ZERO_TERMINATED);
 
-  curl_easy_reset(curl_.get());
-  curl_easy_setopt(curl_.get(), CURLOPT_URL, url.c_str());
-  curl_easy_setopt(curl_.get(), CURLOPT_USERAGENT, "tranx");
-  curl_easy_setopt(curl_.get(), CURLOPT_FOLLOWLOCATION, 1L);
-  curl_easy_setopt(curl_.get(), CURLOPT_SSL_VERIFYPEER, 0L);
-  curl_easy_setopt(curl_.get(), CURLOPT_SSL_VERIFYHOST, 0L);
-  curl_easy_setopt(curl_.get(), CURLOPT_WRITEFUNCTION, writeCallback);
-  curl_easy_setopt(curl_.get(), CURLOPT_WRITEDATA, &response);
-  curl_easy_setopt(curl_.get(), CURLOPT_MIMEPOST, mime);
-  curl_easy_setopt(curl_.get(), CURLOPT_BUFFERSIZE, 1024L);
-  curl_easy_setopt(curl_.get(), CURLOPT_CONNECTTIMEOUT, 5L);
+  curl_easy_reset(curl);
+  curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+  curl_easy_setopt(curl, CURLOPT_USERAGENT, "tranx");
+  curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+  curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+  curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+  curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
+  curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 1024L);
+  curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5L);
 
-  if (const auto res = curl_easy_perform(curl_.get()); res != CURLE_OK) {
+  if (const auto res = curl_easy_perform(curl); res != CURLE_OK) {
     curl_mime_free(mime);
     throw HttpException(curl_easy_strerror(res));
   }

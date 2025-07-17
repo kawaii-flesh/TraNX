@@ -4,7 +4,16 @@
 
 namespace front {
 
-void TraNXOverlay::initServices() { app::Manager::getInstance().init(); }
+void TraNXOverlay::initServices() {
+  nifmInitialize(NifmServiceType_User);
+  curl_global_init(CURL_GLOBAL_DEFAULT);
+  app::Manager::getInstance().init();
+}
+
+void TraNXOverlay::exitServices() {
+  curl_global_cleanup();
+  nifmExit();
+}
 
 void TraNXOverlay::onShow() {}
 

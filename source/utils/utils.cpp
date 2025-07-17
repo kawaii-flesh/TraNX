@@ -60,16 +60,23 @@ tsl::Color hexToColor4444(std::string_view hexStr) noexcept {
     return 0;
   };
 
-  if (hexStr.size() != 6)
+  if (hexStr.size() != 6 && hexStr.size() != 8)
     return {0, 0, 0, 0xFF};
 
-  return {static_cast<u8>((hexCharTo4bit(hexStr[0]) << 4) |
-                          hexCharTo4bit(hexStr[1])),
-          static_cast<u8>((hexCharTo4bit(hexStr[2]) << 4) |
-                          hexCharTo4bit(hexStr[3])),
-          static_cast<u8>((hexCharTo4bit(hexStr[4]) << 4) |
-                          hexCharTo4bit(hexStr[5])),
-          0xFF};
+  u8 r = static_cast<u8>((hexCharTo4bit(hexStr[0]) << 4) |
+                         hexCharTo4bit(hexStr[1]));
+  u8 g = static_cast<u8>((hexCharTo4bit(hexStr[2]) << 4) |
+                         hexCharTo4bit(hexStr[3]));
+  u8 b = static_cast<u8>((hexCharTo4bit(hexStr[4]) << 4) |
+                         hexCharTo4bit(hexStr[5]));
+  u8 a = 0xFF;
+
+  if (hexStr.size() == 8) {
+    a = static_cast<u8>((hexCharTo4bit(hexStr[6]) << 4) |
+                        hexCharTo4bit(hexStr[7]));
+  }
+
+  return {r, g, b, a};
 }
 
 [[nodiscard]] std::pair<u64, bool>

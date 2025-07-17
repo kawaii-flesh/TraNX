@@ -53,11 +53,10 @@ void TraNXElement::draw(tsl::gfx::Renderer *renderer) {
     auto &frame = manager.getUseOutputFrame() ? manager.getOutputFrame()
                                               : manager.getTranslationFrame();
     auto bgColorOpaque = backgroundColor;
-    bgColorOpaque.a = 0xf;
 
     drawRectFrame(renderer, frame, bgColorOpaque, 4);
-    renderer->drawString(text.text.c_str(), false, text.x + 8, text.y + text.height,
-                         text.height, fontColor);
+    renderer->drawString(text.text.c_str(), false, text.x + 8,
+                         text.y + text.height, text.height, fontColor);
   }
 }
 

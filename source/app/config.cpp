@@ -8,7 +8,7 @@ namespace defaults {
 constexpr const char *UPLOAD_URL = "http://127.0.0.1:1785/upload";
 constexpr const char *CHANGE_MODE_COMBO = "LS";
 constexpr const char *BACK_COMBO = "DLEFT";
-constexpr const char *UPLOAD_COMBO = "RS";
+constexpr const char *UPLOAD_COMBO = "!RS";
 constexpr const char *TRANSLATION_FRAME_COMBO = "DRIGHT";
 constexpr const char *OUTPUT_FRAME_COMBO = "DUP";
 constexpr const char *CLEAN_SCREEN_COMBO = "DDOWN";

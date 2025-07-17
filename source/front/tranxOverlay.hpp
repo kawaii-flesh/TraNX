@@ -8,6 +8,7 @@ namespace front {
 class TraNXOverlay final : public tsl::Overlay {
 public:
   void initServices() override;
+  void exitServices() override;
   void onShow() override;
   void onHide() override;
   std::unique_ptr<tsl::Gui> loadInitialGui() override;

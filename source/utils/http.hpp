@@ -19,8 +19,7 @@ public:
 };
 
 class HttpRequester {
-  using CurlHandle = std::unique_ptr<CURL, decltype(&curl_easy_cleanup)>;
-  CurlHandle curl_;
+  CURL *curl = nullptr;
 
 public:
   struct ScreenshotData {
@@ -29,7 +28,7 @@ public:
   };
 
   HttpRequester();
-  ~HttpRequester() = default;
+  ~HttpRequester();
 
   [[nodiscard]] std::string sendScreenshotAndFrames(
       const std::string &url, const std::vector<unsigned char> &imageData,
