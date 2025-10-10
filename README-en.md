@@ -13,7 +13,7 @@ TraNX - On-screen translator for Nintendo Switch
 5. Launch `ovlmenu`
 6. Select `TraNX` from the list of overlays (after the first launch, a configuration file will be created at `sd:/config/TraNX/config.ini`)
 7. Exit the overlay (press `left stick`, press `left` on the d-pad)
-8. In the configuration file, change the `host address` where `TraNX-Server` is running in the `uploadURL` field
+8. In the configuration file, change the value of the `uploadURL` field to specify the full URL of the `upload` endpoint on the host where the `TraNX-Server` is running (for example, http://192.168.0.123:1785/upload)
 
     > Starting from `TraNX v2.1.0` and `TraNX-Server v5.1.0`, you can use `uploadURL=*` instead of specifying the URL explicitly
 

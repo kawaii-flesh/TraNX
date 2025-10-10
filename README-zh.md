@@ -13,7 +13,7 @@ English Introduction: [README-en.md](README-en.md)
 5. 启动 `ovlmenu`
 6. 从覆盖层列表中选择 `TraNX` (首次启动后将在 `sd:/config/TraNX/config.ini` 创建配置文件)
 7. 退出覆盖层 (按下`左摇杆`，按下十字键的`左方向键`)
-8. 在配置文件中，将 `uploadURL` 字段更改为运行 `TraNX-Server` 的`主机地址`
+8. 在配置文件中修改 `uploadURL` 字段的值，指定运行 `TraNX-Server` 的主机上 `upload` 端点的完整 URL（例如：http://192.168.0.123:1785/upload）。
 
     > 从 `TraNX v2.1.0` 和 `TraNX-Server v5.1.0` 开始，可以使用 `uploadURL=*` 来代替显式指定的 URL
 
