@@ -1,5 +1,6 @@
 #include "manager.hpp"
 #include "../utils/discover.hpp"
+#include "../utils/base64.hpp"
 
 namespace app {
 
@@ -57,10 +58,19 @@ void Manager::updateText(const std::string &jsonResponse) {
     this->useOutputFrame = json.at("use_output_frame").get<bool>();
     this->translationFrame.updateFromJson(json["translation_frame"]);
     this->outputFrame.updateFromJson(json["output_frame"]);
-    this->text =
-        core::Text(json.at("text").get<std::string>(), json.at("x").get<int>(),
-                   json.at("y").get<int>(), json.at("width").get<int>(),
-                   json.at("height").get<int>());
+    
+    int x = json.at("x").get<int>();
+    int y = json.at("y").get<int>();
+
+    std::vector<u8> imgData;
+    if (json.contains("image_base64") && !json["image_base64"].is_null()) {
+        std::string b64Str = json["image_base64"].get<std::string>();
+        if (!b64Str.empty()) {
+            imgData = utils::base64_decode(b64Str);
+        }
+    }
+
+    this->text = core::Text(std::move(imgData), x, y);
   } catch (const std::exception &e) {
     utils::logTNX("Error updating text: %s\n", e.what());
   }
@@ -94,7 +104,7 @@ bool Manager::processingInput(u64 keysDown, u64 keysHeld,
 
   if (checkComboAndState(keysDown, cleanScreenComboKeys,
                          State::COMBO_PROCESSING)) {
-    text.text.clear();
+    text.imageData.clear();
     return true;
   }
 
@@ -105,7 +115,7 @@ void Manager::handleModeChange() {
   bool isComboProcessing = currentState == State::COMBO_PROCESSING;
   currentState = isComboProcessing ? State::RUNNING : State::COMBO_PROCESSING;
   if (isComboProcessing) {
-    text.text.clear();
+    text.imageData.clear();
   }
   tsl::hlp::requestForeground(!isComboProcessing);
 }
@@ -171,7 +181,7 @@ bool Manager::startFrameTracking(u64 keysHeld,
   currentFrame->endX = currentFrame->startX;
   currentFrame->endY = currentFrame->startY;
   tracking = true;
-  text.text.clear();
+  text.imageData.clear();
   return true;
 }
 

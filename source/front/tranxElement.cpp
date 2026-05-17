@@ -1,5 +1,8 @@
 #include "tranxElement.hpp"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "../utils/stb_image.h"
+
 namespace front {
 
 TraNXElement::TraNXElement() : tsl::elm::Element() {}
@@ -22,7 +25,6 @@ void TraNXElement::draw(tsl::gfx::Renderer *renderer) {
 
   const auto backgroundColor =
       utils::hexToColor4444(config.getBackgroundColor());
-  const auto fontColor = utils::hexToColor4444(config.getFontColor());
 
   renderer->clearScreen();
 
@@ -48,15 +50,25 @@ void TraNXElement::draw(tsl::gfx::Renderer *renderer) {
     drawRectFrame(renderer, manager.getTranslationFrame(), bgColorWithAlpha);
   }
 
-  const auto &text = manager.getText();
-  if (!text.text.empty()) {
-    auto &frame = manager.getUseOutputFrame() ? manager.getOutputFrame()
+  const core::Text &text = manager.getText();
+  if (!text.imageData.empty()) {
+    const app::Frame &frame = manager.getUseOutputFrame() ? manager.getOutputFrame() 
                                               : manager.getTranslationFrame();
-    auto bgColorOpaque = backgroundColor;
+    
+    drawRectFrame(renderer, frame, backgroundColor, 0);
 
-    drawRectFrame(renderer, frame, bgColorOpaque, 4);
-    renderer->drawString(text.text.c_str(), false, text.x + 8,
-                         text.y + text.height, text.height, fontColor);
+    int img_w, img_h, img_channels;
+    unsigned char* pixels = stbi_load_from_memory(
+        text.imageData.data(), 
+        text.imageData.size(), 
+        &img_w, &img_h, &img_channels, 
+        4
+    );
+
+    if (pixels) {
+      renderer->drawBitmap(text.x, text.y, img_w, img_h, pixels);
+      stbi_image_free(pixels);
+    }
   }
 }
 

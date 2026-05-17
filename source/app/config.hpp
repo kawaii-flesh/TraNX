@@ -27,7 +27,6 @@ public:
   [[nodiscard]] const std::string &getOutputFrameCombo() const noexcept;
   [[nodiscard]] const std::string &getCleanScreenCombo() const noexcept;
   [[nodiscard]] const std::string &getBackgroundColor() const noexcept;
-  [[nodiscard]] const std::string &getFontColor() const noexcept;
 
   void setUploadURL(std::string newUrl) noexcept;
   void setChangeModeCombo(std::string combo) noexcept;
@@ -37,7 +36,6 @@ public:
   void setOutputFrameCombo(std::string combo) noexcept;
   void setCleanScreenCombo(std::string combo) noexcept;
   void setBackgroundColor(std::string color) noexcept;
-  void setFontColor(std::string color) noexcept;
 
   void load() noexcept;
   [[nodiscard]] bool write() const noexcept;
@@ -57,7 +55,6 @@ private:
   std::string outputFrameCombo;
   std::string cleanScreenCombo;
   std::string backgroundColor;
-  std::string fontColor;
 };
 
 } // namespace app

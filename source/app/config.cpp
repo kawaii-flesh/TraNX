@@ -12,7 +12,7 @@ constexpr const char *UPLOAD_COMBO = "!RS";
 constexpr const char *TRANSLATION_FRAME_COMBO = "DRIGHT";
 constexpr const char *OUTPUT_FRAME_COMBO = "DUP";
 constexpr const char *CLEAN_SCREEN_COMBO = "DDOWN";
-constexpr const char *BACKGROUND_COLOR = "050505";
+constexpr const char *BACKGROUND_COLOR = "05050505"; // RGBA4444
 constexpr const char *FONT_COLOR = "FFFFFF";
 } // namespace defaults
 
@@ -23,8 +23,7 @@ Config::Config() noexcept
       translationFrameCombo(defaults::TRANSLATION_FRAME_COMBO),
       outputFrameCombo(defaults::OUTPUT_FRAME_COMBO),
       cleanScreenCombo(defaults::CLEAN_SCREEN_COMBO),
-      backgroundColor(defaults::BACKGROUND_COLOR),
-      fontColor(defaults::FONT_COLOR) {
+      backgroundColor(defaults::BACKGROUND_COLOR) {
   try {
     std::filesystem::create_directories(configDirPath);
   } catch (...) {
@@ -57,7 +56,6 @@ const std::string &Config::getCleanScreenCombo() const noexcept {
 const std::string &Config::getBackgroundColor() const noexcept {
   return backgroundColor;
 }
-const std::string &Config::getFontColor() const noexcept { return fontColor; }
 
 void Config::setUploadURL(std::string newUrl) noexcept {
   uploadURL = std::move(newUrl);
@@ -82,9 +80,6 @@ void Config::setCleanScreenCombo(std::string combo) noexcept {
 }
 void Config::setBackgroundColor(std::string color) noexcept {
   backgroundColor = std::move(color);
-}
-void Config::setFontColor(std::string color) noexcept {
-  fontColor = std::move(color);
 }
 
 void Config::load() noexcept {
@@ -115,8 +110,6 @@ void Config::load() noexcept {
       setBackgroundColor(section.contains("backgroundColor")
                              ? section.at("backgroundColor")
                              : defaults::BACKGROUND_COLOR);
-      setFontColor(section.contains("fontColor") ? section.at("fontColor")
-                                                 : defaults::FONT_COLOR);
     }
   } catch (const std::exception &e) {
     utils::logTNX("Error loading config: %s\n", e.what());
@@ -139,7 +132,6 @@ bool Config::write() const noexcept {
     iniData["General"]["outputFrameCombo"] = outputFrameCombo;
     iniData["General"]["cleanScreenCombo"] = cleanScreenCombo;
     iniData["General"]["backgroundColor"] = backgroundColor;
-    iniData["General"]["fontColor"] = fontColor;
 
     tsl::hlp::ini::writeSettings(configFilePath.c_str(), iniData);
     return true;
